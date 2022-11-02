@@ -26,6 +26,61 @@ routes.get('/', (req, res) => {
         });
 });
 
+// get in-progress todos with custom instance method with async/await
+routes.get('/in-progress', async (req, res) => {
+    try {
+        const todo = new Todo();
+        const inProgressTodos = await todo.getInProgressTodos();
+        res.status(200).json({
+            message: 'Todos retrieved successfully',
+            inProgressTodos,
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Some error occurred while getting the Todos.' });
+    }
+});
+
+// get in-progress todos with custom instance method with callback
+routes.get('/in-progress-callback', (req, res) => {
+    const todo = new Todo();
+    todo.getInProgressTodosCallback((err, inProgressTodos) => {
+        if (err) {
+            res.status(500).json({ error: 'Some error occurred while getting the Todos.' });
+        } else {
+            res.status(200).json({
+                message: 'Todos retrieved successfully',
+                inProgressTodos,
+            });
+        }
+    });
+});
+
+// get all titles containing the given string(js) with custom static method
+routes.get('/js', async (req, res) => {
+    try {
+        const todos = await Todo.findByJs();
+        res.status(200).json({
+            message: 'Todos retrieved successfully',
+            todos,
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Some error occurred while getting the Todos.' });
+    }
+});
+
+// get all the todos containing the given language with custom query helper
+routes.get('/language', async (req, res) => {
+    try {
+        const todos = await Todo.find().byLanguage('react');
+        res.status(200).json({
+            message: 'Todos retrieved successfully',
+            todos,
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Some error occurred while getting the Todos.' });
+    }
+});
+
 // get a single todo with async await
 routes.get('/:id', async (req, res) => {
     try {
